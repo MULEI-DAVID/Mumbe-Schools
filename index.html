@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="images/mja_school_logo.jpg">
+    <title>Mumbe Group of Schools | Home</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1a4480;
+            --secondary-yellow: #daa520;
+            --accent-gold: #daa520;
+            --dark: #333;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark);
+            background-color: #f5f5f5;
+        }
+        
+        /* Header & Navigation */
+        .navbar {
+            background: linear-gradient(to right, var(--primary-blue), #0d2c52);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white !important;
+            font-weight: 700;
+        }
+        
+        .navbar-brand img {
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            margin: 0 5px;
+            padding: 10px 15px !important;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+        
+        .dropdown-menu {
+            background-color: white;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 8px 8px;
+            margin-top: 5px;
+        }
+        
+        .dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(26, 68, 128, 0.1);
+            border-left: 3px solid var(--secondary-yellow);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0d2c52;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-outline-light {
+            border: 2px solid white;
+            color: white;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--primary-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Sections */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            position: relative;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .section-title h2 {
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: inline-block;
+            padding-bottom: 15px;
+            position: relative;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-yellow);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .history-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            height: 100%;
+            transition: transform 0.3s;
+        }
+        
+        .history-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .mission-card {
+            border-top: 5px solid var(--primary-blue);
+        }
+        
+        .vision-card {
+            border-top: 5px solid var(--secondary-yellow);
+        }
+        
+        .motto-card {
+            border-top: 5px solid var(--accent-gold);
+        }
+        
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-blue), #0d2c52);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .icon-box i {
+            color: white;
+            font-size: 28px;
+        }
+        
+        /* Schools Section */
+        .schools-section {
+            background-color: #eef2f7;
+        }
+        
+        .school-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            height: 100%;
+            position: relative;
+        }
+        
+        .school-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .school-img {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .school-content {
+            padding: 25px;
+        }
+        
+        .school-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .school-card .btn {
+            background-color: var(--secondary-yellow);
+            color: var(--dark);
+            font-weight: 600;
+            width: 100%;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .school-card .btn:hover {
+            background-color: var(--accent-gold);
+            color: white;
+        }
+        
+        /* Why Choose Us */
+        .feature-item {
+            display: flex;
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            flex: 0 0 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-blue), #0d2c52);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: white;
+            font-size: 28px;
+        }
+        
+        .feature-content h4 {
+            color: var(--primary-blue);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        /* New Academic Excellence Section Styles */
+        .academic-section {
+            background-color: #f9f9f9;
+            padding: 80px 0;
+        }
+        
+        .academic-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            height: 100%;
+            transition: all 0.3s;
+            border-top: 4px solid var(--primary-blue);
+        }
+        
+        .academic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .academic-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .academic-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-blue), #0d2c52);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .academic-title h3 {
+            color: var(--primary-blue);
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .academic-title p {
+            color: var(--secondary-yellow);
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .results-table th {
+            background-color: rgba(26, 68, 128, 0.1);
+            color: var(--primary-blue);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .highlight {
+            color: var(--secondary-yellow);
+            font-weight: 700;
+        }
+        
+        .progress-container {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--secondary-yellow), var(--accent-gold));
+            border-radius: 10px;
+        }
+        
+        .achievements {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+        
+        .achievements h5 {
+            color: var(--primary-blue);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .achievement-item {
+            display: flex;
+            margin-bottom: 12px;
+        }
+        
+        .achievement-item i {
+            color: var(--secondary-yellow);
+            margin-right: 10px;
+            min-width: 20px;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(rgba(26, 68, 128, 0.9), rgba(13, 44, 82, 0.9)), 
+                        url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .cta-section p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(to right, #0a1a30, var(--primary-blue));
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-logo {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer h5::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-yellow);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary-yellow);
+            padding-left: 5px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--secondary-yellow);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .footer-btn:hover {
+            background-color: var(--secondary-yellow);
+            color: var(--dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 991px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .hero {
+                height: 70vh;
+            }
+            
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+            
+            .feature-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .feature-icon {
+                margin: 0 auto 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/mja_school_logo.jpg" alt="Mumbe Schools Logo">
+            
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown">
+                            About Us
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="About.html">Overview</a></li>
+                            <li><a class="dropdown-item" href="About.html#history">Our History</a></li>
+                            <li><a class="dropdown-item" href="leadership.html">Leadership</a></li>
+                            <li><a class="dropdown-item" href="facilities.html">Facilities</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="schoolsDropdown" role="button" data-bs-toggle="dropdown">
+                            Our Schools
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="Kindergarten.html">Kindergarten</a></li>
+                            <li><a class="dropdown-item" href="Primary.html">Primary School</a></li>
+                            <li><a class="dropdown-item" href="JuniorSecondary.html">Junior Secondary</a></li>
+                            <li><a class="dropdown-item" href="GirlsHigh.html">Mumbe Girls High School</a></li>
+                            <li><a class="dropdown-item" href="BoysHigh.html">Mumbe Boys High School</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="lifeDropdown" role="button" data-bs-toggle="dropdown">
+                            School Life
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="Schoollife.html">Student Life</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#activities">Activities & Clubs</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#sports">Sports</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#events">Events</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Enquire Now</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>PRIVATE SCHOOL IN MAKINDU, KENYA</h1>
+                <h1 class="display-2 fw-bold">MUMBE GROUP OF SCHOOLS</h1>
+                <p class="lead">Providing quality education from kindergarten to high school since 2002</p>
+                <div class="mt-4">
+                    <a href="contact.html" class="btn btn-primary btn-lg me-3">Enroll Now</a>
+                    <a href="About.html" class="btn btn-outline-light btn-lg">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>Welcome to Mumbe Schools</h2>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="history-card">
+                        <h3 class="mb-4">Our History</h3>
+                        <p>Founded in 2002, Mumbe Group of Schools was established with a vision to provide holistic, accessible, and quality education to children and youth in Makindu and the surrounding areas of Makueni County.</p>
+                        <p>What began as a modest kindergarten with just two classrooms and a handful of dedicated teachers has now grown into a reputable educational institution, serving hundreds of learners across all levels of basic education.</p>
+                        <p>Today, the Mumbe Group of Schools stands as a beacon of hope, transformation, and opportunity in the region. The group is committed to continuous growth, innovation in teaching and learning, and the holistic development of every learner—spiritually, intellectually, and socially.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="history-card mission-card">
+                                <div class="icon-box">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
+                                <h4>Our Mission</h4>
+                                <p>Empower learners to achieve excellence in both academic and extra-curricular domains.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="history-card vision-card">
+                                <div class="icon-box">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <h4>Our Vision</h4>
+                                <p>To cultivate excellence that reflects both national and international standards, and to raise a reliable, principled, and capable child.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="history-card motto-card">
+                                <div class="icon-box">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <h4>Our Motto</h4>
+                                <p>The Fountain of Knowledge</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="history-card">
+                                <div class="icon-box">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h4>Our Community</h4>
+                                <p>With a dedicated team of educators and strong support from the local community, Mumbe Schools continue to shape the future, one child at a time.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schools Section -->
+    <section class="section schools-section" id="schools">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Schools</h2>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="school-card">
+                        <div class="school-img" style="background-image: url('https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="school-content">
+                            <h3>Kindergarten</h3>
+                            <p class="mb-3">Ages 3-6</p>
+                            <p>Our early childhood program focuses on holistic development through play-based learning in a safe, nurturing environment.</p>
+                            <a href="Kindergarten.html" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="school-card">
+                        <div class="school-img" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="school-content">
+                            <h3>Primary School</h3>
+                            <p class="mb-3">Ages 7-14</p>
+                            <p>Building strong foundations in core subjects while fostering creativity, critical thinking, and character development.</p>
+                            <a href="Primary.html" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="school-card">
+                        <div class="school-img" style="background-image: url('https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="school-content">
+                            <h3>Junior Secondary</h3>
+                            <p class="mb-3">Ages 14-16</p>
+                            <p>Fully aligned with Kenya's CBC curriculum, offering hands-on, skills-based learning for real-life challenges.</p>
+                            <a href="JuniorSecondary.html" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="school-card">
+                        <div class="school-img" style="background-image: url('https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="school-content">
+                            <h3>Mumbe Girls High School</h3>
+                            <p class="mb-3">Ages 16-18</p>
+                            <p>Empowering young women with quality education, leadership skills, and values to excel in all spheres of life.</p>
+                            <a href="GirlsHigh.html" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="school-card">
+                        <div class="school-img" style="background-image: url('https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="school-content">
+                            <h3>Mumbe Boys High School</h3>
+                            <p class="mb-3">Ages 16-18</p>
+                            <p>Developing young men of integrity through academic excellence, character building, and leadership training.</p>
+                            <a href="BoysHigh.html" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="section" id="why-us">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose Mumbe Schools?</h2>
+            </div>
+            
+            <p class="text-center mb-5 lead">At Mumbe Group of Schools, we believe that every child deserves a strong foundation, a nurturing environment, and the opportunity to excel. With over two decades of experience in delivering quality education from kindergarten to high school, we are proud to be one of the leading educational institutions in Makueni, Kenya.</p>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Holistic Education</h4>
+                            <p>We go beyond academics to nurture students intellectually, emotionally, morally, and socially—preparing them to thrive in a dynamic world.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Experienced and Caring Staff</h4>
+                            <p>Our qualified teachers and support staff are passionate about teaching and committed to the success and well-being of every learner.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>CBC-Ready and Future-Focused</h4>
+                            <p>Our junior high and other programs are fully aligned with Kenya's Competency-Based Curriculum (CBC), offering hands-on, skills-based learning that prepares students for real-life challenges.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Safe, Inclusive Learning Environment</h4>
+                            <p>Whether it's our girls' or boys' high schools, or our early childhood classes, every campus is designed to promote safety, discipline, and respect.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Proven Academic Excellence</h4>
+                            <p>Our students consistently perform well in national exams, and many alumni have earned scholarships and gained admission to top universities and colleges.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Strong Values and Leadership Development</h4>
+                            <p>We instill values such as integrity, responsibility, and leadership to develop confident, respectful, and community-minded individuals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Academic Excellence Section -->
+    <section class="academic-section" id="academics">
+        <div class="container">
+            <div class="section-title">
+                <h2>Academic Excellence</h2>
+                <p class="lead text-center mx-auto" style="max-width: 800px;">Our commitment to academic rigor and excellence is reflected in our outstanding national examination results and university transition rates.</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="academic-card">
+                        <div class="academic-header">
+                            <div class="academic-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="academic-title">
+                                <h3>Mumbe Boys High School</h3>
+                                <p>KCSE Performance</p>
+                            </div>
+                        </div>
+                        
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Mean Score</th>
+                                    <th>University Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2023</td>
+                                    <td class="highlight">9.21</td>
+                                    <td>92.5%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>8.97</td>
+                                    <td>90.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>8.75</td>
+                                    <td>88.7%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 92.5%"></div>
+                        </div>
+                        <p class="text-end"><small>2023 University Transition Rate: 92.5%</small></p>
+                        
+                        <div class="achievements">
+                            <h5>Notable Achievements:</h5>
+                            <div class="achievement-item">
+                                <i class="fas fa-trophy"></i>
+                                <span>County Top in Mathematics & Physics (2023)</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-medal"></i>
+                                <span>5 Students with A Plain (2023)</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>22 Students admitted to National Schools</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="academic-card">
+                        <div class="academic-header">
+                            <div class="academic-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="academic-title">
+                                <h3>Mumbe Girls High School</h3>
+                                <p>KCSE Performance</p>
+                            </div>
+                        </div>
+                        
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Mean Score</th>
+                                    <th>University Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2023</td>
+                                    <td class="highlight">9.35</td>
+                                    <td>95.2%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>9.12</td>
+                                    <td>92.8%</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>8.94</td>
+                                    <td>90.5%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 95.2%"></div>
+                        </div>
+                        <p class="text-end"><small>2023 University Transition Rate: 95.2%</small></p>
+                        
+                        <div class="achievements">
+                            <h5>Notable Achievements:</h5>
+                            <div class="achievement-item">
+                                <i class="fas fa-trophy"></i>
+                                <span>Top 10 Nationally in Biology & Chemistry (2023)</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-medal"></i>
+                                <span>8 Students with A Plain (2023)</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>Top in Makueni County for 3 consecutive years</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="academic-card">
+                        <div class="academic-header">
+                            <div class="academic-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="academic-title">
+                                <h3>Mumbe Primary School</h3>
+                                <p>KCPE Performance</p>
+                            </div>
+                        </div>
+                        
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Mean Score</th>
+                                    <th>High School Placement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2023</td>
+                                    <td class="highlight">365</td>
+                                    <td>98.7%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>358</td>
+                                    <td>96.4%</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>352</td>
+                                    <td>94.2%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 98.7%"></div>
+                        </div>
+                        <p class="text-end"><small>2023 National School Placement: 98.7%</small></p>
+                        
+                        <div class="achievements">
+                            <h5>Notable Achievements:</h5>
+                            <div class="achievement-item">
+                                <i class="fas fa-trophy"></i>
+                                <span>3 Students scored 420+ in 2023 KCPE</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-medal"></i>
+                                <span>Top in Mathematics & Science County-wide</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>15 Students admitted to National Schools</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="academic-card">
+                        <div class="academic-header">
+                            <div class="academic-icon">
+                                <i class="fas fa-pencil-alt"></i>
+                            </div>
+                            <div class="academic-title">
+                                <h3>Junior Secondary</h3>
+                                <p>CBC Performance</p>
+                            </div>
+                        </div>
+                        
+                        <p class="mb-4">Our Junior Secondary program, aligned with Kenya's Competency-Based Curriculum (CBC), focuses on developing well-rounded students through practical skills and academic excellence.</p>
+                        
+                        <div class="achievements">
+                            <h5>Key Performance Indicators:</h5>
+                            <div class="achievement-item">
+                                <i class="fas fa-star"></i>
+                                <span>95% of students achieving above-average in core competencies</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-star"></i>
+                                <span>Outstanding performance in Science & Technology projects</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-star"></i>
+                                <span>Recognition at County Science Fairs (2022, 2023)</span>
+                            </div>
+                            <div class="achievement-item">
+                                <i class="fas fa-star"></i>
+                                <span>90% parental satisfaction rate with CBC implementation</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5>Skill Development Focus:</h5>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <span class="badge bg-primary">Digital Literacy</span>
+                                <span class="badge bg-success">Critical Thinking</span>
+                                <span class="badge bg-warning">Communication</span>
+                                <span class="badge bg-info">Creativity</span>
+                                <span class="badge bg-secondary">Problem Solving</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <div class="alert alert-info d-inline-flex align-items-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <div>
+                        <strong>Note:</strong> All our schools follow a rigorous academic program designed to maximize student potential and prepare them for future success.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Contact Us Today</h2>
+            <p>Every great journey in education begins with a single step. Connect with Mumbe Group of Schools today. Let's walk together in shaping a brighter future for your child. We're here to listen, guide, and grow with you.</p>
+            <a href="contact.html" class="btn btn-primary btn-lg">Enquire Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <img src="images/mja_school_logo.jpg" alt="Mumbe Schools Logo" class="footer-logo">
+                    <p class="mb-4">Providing quality education in Makindu, Kenya since 2002. The Fountain of Knowledge.</p>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                        </div>
+                        <p>Makindu, Makueni County, Kenya</p>
+                    </div>
+                    <div class="d-flex mb-4">
+                        <div class="me-3">
+                            <i class="fas fa-phone-alt me-2"></i>
+                        </div>
+                        <p>+254 712 345 678</p>
+                    </div>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-5 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="About.html">About Us</a></li>
+                        <li><a href="schools.html">Our Schools</a></li>
+                        <li><a href="Schoollife.html">School Life</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-4 mb-5 mb-md-0">
+                    <h5>Portals</h5>
+                    <a href="#" class="footer-btn">Parents Portal</a>
+                    <a href="#" class="footer-btn">Faculty Portal</a>
+                    <a href="#" class="footer-btn">Student Portal</a>
+                </div>
+                
+                <div class="col-lg-3 col-md-4">
+                    <h5>Newsletter</h5>
+                    <p class="mb-3">Subscribe to our newsletter for updates and announcements.</p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Your Email">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="mb-0">&copy; 2025 Mumbe Group of Schools. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple animation for school cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const schoolCards = document.querySelectorAll('.school-card');
+            
+            schoolCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-15px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Mumbe Group of Schools</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1a4480;
+            --secondary-yellow: #daa520;
+            --accent-gold: #daa520;
+            --dark: #333;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark);
+            background-color: #f5f5f5;
+        }
+        
+        /* Header & Navigation */
+        .navbar {
+            background: linear-gradient(to right, var(--primary-blue), #0d2c52);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white !important;
+            font-weight: 700;
+        }
+        
+        .navbar-brand img {
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            margin: 0 5px;
+            padding: 10px 15px !important;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+        
+        .dropdown-menu {
+            background-color: white;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 8px 8px;
+            margin-top: 5px;
+        }
+        
+        .dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(26, 68, 128, 0.1);
+            border-left: 3px solid var(--secondary-yellow);
+        }
+        
+        /* Hero Section */
+        .about-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .about-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .about-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        /* Sections */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            position: relative;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .section-title h2 {
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: inline-block;
+            padding-bottom: 15px;
+            position: relative;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-yellow);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Director Message */
+        .director-message {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            position: relative;
+            margin-top: -80px;
+            z-index: 10;
+        }
+        
+        .director-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--secondary-yellow);
+            padding-bottom: 20px;
+        }
+        
+        .director-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--secondary-yellow);
+            margin-right: 30px;
+        }
+        
+        .director-title h3 {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+        
+        .director-title p {
+            color: var(--dark);
+            opacity: 0.8;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--secondary-yellow);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            width: 50%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+        
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-blue);
+            border: 4px solid var(--secondary-yellow);
+            top: 30px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .timeline-item:nth-child(odd)::after {
+            right: -12px;
+        }
+        
+        .timeline-item:nth-child(even)::after {
+            left: -12px;
+        }
+        
+        .timeline-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-year {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+        
+        /* Achievements & Strengths */
+        .feature-item {
+            display: flex;
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            flex: 0 0 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-blue), #0d2c52);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: white;
+            font-size: 28px;
+        }
+        
+        .feature-content h4 {
+            color: var(--primary-blue);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        /* Looking Ahead */
+        .future-section {
+            background-color: #eef2f7;
+        }
+        
+        .future-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border-top: 4px solid var(--primary-blue);
+        }
+        
+        .future-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .future-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-blue), #0d2c52);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+        }
+        
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(rgba(26, 68, 128, 0.9), rgba(13, 44, 82, 0.9)), 
+                        url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .cta-section p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0d2c52;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(to right, #0a1a30, var(--primary-blue));
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-logo {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer h5::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-yellow);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary-yellow);
+            padding-left: 5px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--secondary-yellow);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .footer-btn:hover {
+            background-color: var(--secondary-yellow);
+            color: var(--dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 991px) {
+            .section {
+                padding: 60px 0;
+            }
+            
+            .timeline::before {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+                left: 0 !important;
+            }
+            
+            .timeline-item:nth-child(odd)::after,
+            .timeline-item:nth-child(even)::after {
+                left: 21px;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .director-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .director-img {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .feature-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .feature-icon {
+                margin: 0 auto 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/mja_school_logo.jpg" alt="Mumbe Schools Logo">
+            
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown">
+                            About Us
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="About.html">Overview</a></li>
+                            <li><a class="dropdown-item" href="About.html#history">Our History</a></li>
+                            <li><a class="dropdown-item" href="leadership.html">Leadership</a></li>
+                            <li><a class="dropdown-item" href="facilities.html">Facilities</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="schoolsDropdown" role="button" data-bs-toggle="dropdown">
+                            Our Schools
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="Kindergarten.html">Kindergarten</a></li>
+                            <li><a class="dropdown-item" href="Primary.html">Primary School</a></li>
+                            <li><a class="dropdown-item" href="JuniorSecondary.html">Junior Secondary</a></li>
+                            <li><a class="dropdown-item" href="GirlsHigh.html">Mumbe Girls High School</a></li>
+                            <li><a class="dropdown-item" href="BoysHigh.html">Mumbe Boys High School</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="lifeDropdown" role="button" data-bs-toggle="dropdown">
+                            School Life
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="Schoollife.html">Student Life</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#activities">Activities & Clubs</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#sports">Sports</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#events">Events</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Enquire Now</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="about-hero-content">
+                <h1>OUR STORY</h1>
+                <p class="lead">20 Years of Excellence in Education</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Director Message -->
+    <section class="section">
+        <div class="container">
+            <div class="director-message">
+                <div class="director-header">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Director" class="director-img">
+                    <div class="director-title">
+                        <h3>A WORD FROM OUR DIRECTOR</h3>
+                        <p>Mr. Muteti, Founder & Director</p>
+                    </div>
+                </div>
+                <div class="director-content">
+                    <p class="lead">"At Mumbe Group of Schools, our journey began with a simple dream — to provide quality, values-driven education in the heart of Makindu. Over the years, we have grown from humble beginnings into a community of learners, leaders, and changemakers."</p>
+                    <p>"As we look to the future, our mission remains clear: to nurture excellence, inspire purpose, and empower every child to reach their full potential. Together with our dedicated staff and supportive parents, we are building not just a school — but a legacy."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section class="section" id="history">
+        <div class="container">
+            <div class="section-title">
+                <h2>20 Years of Impact and Excellence</h2>
+            </div>
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-10 text-center">
+                    <p class="lead">Established in 2005, Mumbe Group of Schools has proudly served the Makindu community for over two decades, growing from a single classroom to a respected educational institution known for academic excellence, moral grounding, and holistic development.</p>
+                </div>
+            </div>
+            
+            <div class="section-title">
+                <h2>Our Journey at a Glance</h2>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2005</div>
+                        <p>Founded with a vision to provide accessible, quality education rooted in African values and Christian principles</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2008</div>
+                        <p>First cohort sits for KCPE with impressive results, setting the tone for academic success.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2010</div>
+                        <p>Expansion to include junior secondary classes due to increasing demand.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2013</div>
+                        <p>Introduction of co-curricular programs: music, drama, sports, and scouting.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2015</div>
+                        <p>Construction of modern science and ICT labs to support STEM education.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements & Strengths -->
+    <section class="section future-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="section-title">
+                        <h2>Our Achievements</h2>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Academic Excellence</h4>
+                            <p>Consistent performance in KCPE and KCSE examinations.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Successful Transitions</h4>
+                            <p>Over 95% transition rate to secondary and tertiary institutions.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Alumni Network</h4>
+                            <p>Strong alumni network involved in various professional fields.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Community Engagement</h4>
+                            <p>Active engagement in environmental, cultural, and community outreach programs.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="section-title">
+                        <h2>Our Strengths</h2>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Dedicated Staff</h4>
+                            <p>A dedicated and qualified team of over 60 teaching and non-teaching staff.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Modern Facilities</h4>
+                            <p>Well-equipped facilities: science labs, libraries, ICT centers, boarding houses, and modern classrooms.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Character Development</h4>
+                            <p>Emphasis on discipline, leadership, spiritual growth, and personal responsibility.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Community Trust</h4>
+                            <p>Strong parent-school partnerships and community trust.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Looking Ahead -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Looking Ahead</h2>
+            </div>
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-10 text-center">
+                    <p class="lead">As we celebrate 20 years of growth, we remain committed to innovation and excellence in education. Mumbe Group of Schools is more than a place of learning — it is a home where potential is discovered, nurtured, and transformed into purpose.</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="future-card">
+                        <div class="future-icon">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                        <h4>Expanding Infrastructure</h4>
+                        <p>Continuing to grow our facilities to serve more students and provide enhanced learning environments.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="future-card">
+                        <div class="future-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h4>Technology Integration</h4>
+                        <p>Integrating emerging technologies to prepare students for the digital future.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="future-card">
+                        <div class="future-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h4>Character Education</h4>
+                        <p>Deepening character education and mentorship programs to develop well-rounded individuals.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <div class="future-card">
+                    <div class="future-icon">
+                        <i class="fas fa-globe-africa"></i>
+                    </div>
+                    <h4>Global Citizenship</h4>
+                    <p>Preparing learners for global citizenship through innovation, critical thinking, and cultural awareness.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Contact Us Today</h2>
+            <p>Every great journey in education begins with a single step. Connect with Mumbe Group of Schools today. Let's walk together in shaping a brighter future for your child. We're here to listen, guide, and grow with you.</p>
+            <a href="contact.html" class="btn btn-primary btn-lg">Enquire Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <img src="images/mja_school_logo.jpg" alt="Mumbe Schools Logo" class="footer-logo">
+                    <p class="mb-4">Providing quality education in Makindu, Kenya since 2002. The Fountain of Knowledge.</p>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                        </div>
+                        <p>Makindu, Makueni County, Kenya</p>
+                    </div>
+                    <div class="d-flex mb-4">
+                        <div class="me-3">
+                            <i class="fas fa-phone-alt me-2"></i>
+                        </div>
+                        <p>+254 712 345 678</p>
+                    </div>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-5 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="About.html">About Us</a></li>
+                        <li><a href="schools.html">Our Schools</a></li>
+                        <li><a href="Schoollife.html">School Life</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-4 mb-5 mb-md-0">
+                    <h5>Portals</h5>
+                    <a href="#" class="footer-btn">Parents Portal</a>
+                    <a href="#" class="footer-btn">Faculty Portal</a>
+                    <a href="#" class="footer-btn">Student Portal</a>
+                </div>
+                
+                <div class="col-lg-3 col-md-4">
+                    <h5>Newsletter</h5>
+                    <p class="mb-3">Subscribe to our newsletter for updates and announcements.</p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Your Email">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="mb-0">&copy; 2025 Mumbe Group of Schools. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

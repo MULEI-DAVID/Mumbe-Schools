@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="images/mja_school_logo.jpg">
+    <title>Mumbe Group of Schools | School Life</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1a4480;
+            --secondary-yellow: #daa520;
+            --accent-gold: #daa520;
+            --dark: #333;
+            --light: #f8f9fa;
+            --life-color:#daa520;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            background-color: #f5f5f5;
+            line-height: 1.8;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Header & Navigation */
+        .navbar {
+            background: linear-gradient(to right, var(--primary-blue), #0d2c52);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white !important;
+            font-weight: 700;
+        }
+        
+        .navbar-brand img {
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            margin: 0 5px;
+            padding: 10px 15px !important;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+        
+        .dropdown-menu {
+            background-color: white;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 8px 8px;
+            margin-top: 5px;
+        }
+        
+        .dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(26, 68, 128, 0.1);
+            border-left: 3px solid var(--secondary-yellow);
+        }
+        
+        .hero-life {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .hero-life h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .hero-life p {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-primary {
+            background-color: var(--life-color);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-outline-light {
+            border: 2px solid white;
+            color: white;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--life-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Sections */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            position: relative;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .section-title h2 {
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: inline-block;
+            padding-bottom: 15px;
+            position: relative;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background-color: var(--life-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Student Life Section */
+        .student-life-section {
+            background-color: #fff;
+        }
+        
+        .life-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            height: 100%;
+            transition: transform 0.3s;
+            border-left: 4px solid var(--life-color);
+        }
+        
+        .life-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .life-icon {
+            font-size: 3rem;
+            color: var(--life-color);
+            margin-bottom: 20px;
+        }
+        
+        /* Activities Section */
+        .activities-section {
+            background-color: #f9f9f9;
+        }
+        
+        .activity-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            height: 100%;
+            position: relative;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .activity-img {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .activity-content {
+            padding: 25px;
+        }
+        
+        .activity-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .activity-card .badge {
+            background-color: var(--life-color);
+            color: white;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        /* Sports Section */
+        .sports-section {
+            background: linear-gradient(rgba(26, 68, 128, 0.03), rgba(26, 68, 128, 0.03)), 
+                        url('https://www.transparenttextures.com/patterns/crossword.png');
+        }
+        
+        .sport-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            height: 100%;
+            position: relative;
+        }
+        
+        .sport-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .sport-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .sport-content {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .sport-content h3 {
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        
+        /* Events Section */
+        .events-section {
+            background-color: #f0f8ff;
+        }
+        
+        .event-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            height: 100%;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .event-date {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--life-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 2;
+        }
+        
+        .event-date .day {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .event-date .month {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        
+        .event-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .event-content {
+            padding: 25px;
+        }
+        
+        .event-content h3 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .event-meta {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .event-meta div {
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .event-meta i {
+            color: var(--life-color);
+            margin-right: 5px;
+        }
+        
+        /* Gallery Section */
+        .gallery-section {
+            background-color: #f8f8f8;
+        }
+        
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        .gallery-overlay i {
+            color: white;
+            font-size: 2rem;
+        }
+        
+        /* Testimonials */
+        .testimonial-section {
+            background: linear-gradient(rgba(26, 68, 128, 0.05), rgba(26, 68, 128, 0.05));
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            position: relative;
+            border-top: 3px solid var(--life-color);
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            font-family: 'Montserrat', sans-serif;
+            color: rgba(231, 76, 60, 0.1);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .testimonial-author img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+            border: 2px solid var(--life-color);
+        }
+        
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(rgba(26, 68, 128, 0.9), rgba(13, 44, 82, 0.9)), 
+                        url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .cta-section p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(to right, #0a1a30, var(--primary-blue));
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-logo {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer h5::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-yellow);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary-yellow);
+            padding-left: 5px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--secondary-yellow);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .footer-btn:hover {
+            background-color: var(--secondary-yellow);
+            color: var(--dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 991px) {
+            .hero-life h1 {
+                font-size: 3.2rem;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .hero-life {
+                height: 60vh;
+            }
+            
+            .hero-life h1 {
+                font-size: 2.5rem;
+            }
+            
+            .event-meta {
+                flex-direction: column;
+            }
+            
+            .event-meta div {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/mja_school_logo.jpg" alt="Mumbe Schools Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown">
+                            About Us
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="About.html">Overview</a></li>
+                            <li><a class="dropdown-item" href="About.html#history">Our History</a></li>
+                            <li><a class="dropdown-item" href="leadership.html">Leadership</a></li>
+                            <li><a class="dropdown-item" href="facilities.html">Facilities</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="schoolsDropdown" role="button" data-bs-toggle="dropdown">
+                            Our Schools
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="Kindergarten.html">Kindergarten</a></li>
+                            <li><a class="dropdown-item" href="Primary.html">Primary School</a></li>
+                            <li><a class="dropdown-item" href="JuniorSecondary.html">Junior Secondary</a></li>
+                            <li><a class="dropdown-item" href="GirlsHigh.html">Mumbe Girls High School</a></li>
+                            <li><a class="dropdown-item" href="BoysHigh.html">Mumbe Boys High School</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="lifeDropdown" role="button" data-bs-toggle="dropdown">
+                            School Life
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="Schoollife.html">Student Life</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#activities">Activities & Clubs</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#sports">Sports</a></li>
+                            <li><a class="dropdown-item" href="Schoollife.html#events">Events</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Enquire Now</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-life">
+        <div class="container">
+            <div class="hero-content">
+                <h1>School Life at Mumbe</h1>
+                <p class="lead">Discover the vibrant community that makes learning at Mumbe an unforgettable experience</p>
+                <div class="mt-4">
+                    <a href="#student-life" class="btn btn-primary btn-lg me-3">Explore Student Life</a>
+                    <a href="#events" class="btn btn-outline-light btn-lg">Upcoming Events</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Life Section -->
+    <section class="section student-life-section" id="student-life">
+        <div class="container">
+            <div class="section-title">
+                <h2>Student Life at Mumbe</h2>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="life-card">
+                        <h3 class="mb-4">Our Vibrant Community</h3>
+                        <p>At Mumbe Group of Schools, we believe education extends far beyond the classroom. Our vibrant school community provides students with countless opportunities to grow, explore, and develop lifelong skills.</p>
+                        <p>From kindergarten to high school, students are encouraged to discover their passions, develop leadership skills, and build meaningful relationships with peers and mentors.</p>
+                        <p>Our diverse student body comes together to create a supportive environment where every student feels valued and empowered to reach their full potential.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="life-card">
+                                <div class="life-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h4>House System</h4>
+                                <p>All students belong to one of our four houses, fostering camaraderie and healthy competition through academic and extracurricular activities.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="life-card">
+                                <div class="life-icon">
+                                    <i class="fas fa-hands-helping"></i>
+                                </div>
+                                <h4>Leadership</h4>
+                                <p>Opportunities for student leadership through prefects, club presidents, and class representatives.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="life-card">
+                                <div class="life-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <h4>Mentorship</h4>
+                                <p>Older students mentor younger ones, creating a supportive community across grade levels.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="life-card">
+                                <div class="life-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <h4>Community Service</h4>
+                                <p>Regular community outreach programs teach empathy and social responsibility.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section class="section activities-section" id="activities">
+        <div class="section-title">
+            <h2>Activities & Clubs</h2>
+        </div>
+        
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="activity-card">
+                        <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="activity-content">
+                            <span class="badge">Academic</span>
+                            <h3>STEM Club</h3>
+                            <p>Explore science, technology, engineering, and math through hands-on projects, competitions, and field trips.</p>
+                            <ul>
+                                <li>Robotics team</li>
+                                <li>Science fairs</li>
+                                <li>Coding workshops</li>
+                                <li>Math Olympiad training</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="activity-card">
+                        <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="activity-content">
+                            <span class="badge">Creative</span>
+                            <h3>Performing Arts</h3>
+                            <p>Express yourself through music, drama, and dance with our performing arts groups.</p>
+                            <ul>
+                                <li>School choir and band</li>
+                                <li>Drama productions</li>
+                                <li>Traditional dance troupe</li>
+                                <li>Talent shows</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="activity-card">
+                        <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="activity-content">
+                            <span class="badge">Leadership</span>
+                            <h3>Student Government</h3>
+                            <p>Develop leadership skills while representing student interests and organizing school events.</p>
+                            <ul>
+                                <li>Elected student council</li>
+                                <li>Class representatives</li>
+                                <li>Event planning committees</li>
+                                <li>Community service projects</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="activity-card">
+                        <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="activity-content">
+                            <span class="badge">Cultural</span>
+                            <h3>Debate & Model UN</h3>
+                            <p>Develop critical thinking and public speaking skills while discussing global issues.</p>
+                            <ul>
+                                <li>Weekly debate sessions</li>
+                                <li>Regional competitions</li>
+                                <li>Model United Nations conferences</li>
+                                <li>Public speaking workshops</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="activity-card">
+                        <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1584697964358-3e14ca57658b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="activity-content">
+                            <span class="badge">Environmental</span>
+                            <h3>Eco Warriors</h3>
+                            <p>Promote environmental awareness and sustainability through practical projects.</p>
+                            <ul>
+                                <li>School recycling program</li>
+                                <li>Tree planting initiatives</li>
+                                <li>Environmental awareness campaigns</li>
+                                <li>Community clean-ups</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="activity-card">
+                        <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1544816155-12df9643f363?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="activity-content">
+                            <span class="badge">Creative</span>
+                            <h3>Art & Design Club</h3>
+                            <p>Explore various art forms and develop creative skills in a supportive environment.</p>
+                            <ul>
+                                <li>Painting and drawing workshops</li>
+                                <li>Pottery and sculpture</li>
+                                <li>Graphic design</li>
+                                <li>Annual art exhibition</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sports Section -->
+    <section class="section sports-section" id="sports">
+        <div class="container">
+            <div class="section-title">
+                <h2>Sports & Athletics</h2>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Football</h3>
+                            <p>Competitive teams for boys and girls at various age levels.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Basketball</h3>
+                            <p>Varsity and junior varsity teams competing regionally.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1511882150382-421056c89033?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Volleyball</h3>
+                            <p>Teams for both indoor and beach volleyball.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Athletics</h3>
+                            <p>Track and field program with specialized coaching.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1595152772835-219674b2a8a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Swimming</h3>
+                            <p>Training and competitive swimming in our Olympic-sized pool.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Rugby</h3>
+                            <p>Competitive rugby program for boys and girls.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1590239926046-2d5d681ef354?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Netball</h3>
+                            <p>Popular girls' sport with competitive teams.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="sport-card">
+                        <div class="sport-img" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="sport-content">
+                            <h3>Chess</h3>
+                            <p>Competitive chess team with regional and national participation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="section events-section" id="events">
+        <div class="container">
+            <div class="section-title">
+                <h2>Upcoming Events</h2>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="event-card">
+                        <div class="event-date">
+                            <div class="day">15</div>
+                            <div class="month">June</div>
+                        </div>
+                        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="event-content">
+                            <h3>Annual Music Festival</h3>
+                            <div class="event-meta">
+                                <div><i class="fas fa-clock"></i> 4:00 PM - 8:00 PM</div>
+                                <div><i class="fas fa-map-marker-alt"></i> School Amphitheater</div>
+                            </div>
+                            <p>Join us for an evening of musical performances by our talented students, featuring choir, band, and solo performances.</p>
+                            <a href="#" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="event-card">
+                        <div class="event-date">
+                            <div class="day">22</div>
+                            <div class="month">June</div>
+                        </div>
+                        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="event-content">
+                            <h3>Inter-House Sports Day</h3>
+                            <div class="event-meta">
+                                <div><i class="fas fa-clock"></i> 9:00 AM - 3:00 PM</div>
+                                <div><i class="fas fa-map-marker-alt"></i> School Sports Ground</div>
+                            </div>
+                            <p>Cheer on your house in our annual sports competition featuring track and field events for all age groups.</p>
+                            <a href="#" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="event-card">
+                        <div class="event-date">
+                            <div class="day">30</div>
+                            <div class="month">June</div>
+                        </div>
+                        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1544816155-12df9643f363?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="event-content">
+                            <h3>Art Exhibition & Sale</h3>
+                            <div class="event-meta">
+                                <div><i class="fas fa-clock"></i> 10:00 AM - 4:00 PM</div>
+                                <div><i class="fas fa-map-marker-alt"></i> School Art Gallery</div>
+                            </div>
+                            <p>View and purchase artwork created by our talented students. Proceeds support the school's art program.</p>
+                            <a href="#" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="event-card">
+                        <div class="event-date">
+                            <div class="day">05</div>
+                            <div class="month">July</div>
+                        </div>
+                        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="event-content">
+                            <h3>Science & Innovation Fair</h3>
+                            <div class="event-meta">
+                                <div><i class="fas fa-clock"></i> 1:00 PM - 5:00 PM</div>
+                                <div><i class="fas fa-map-marker-alt"></i> Science Building</div>
+                            </div>
+                            <p>Explore student science projects and innovations in our annual fair, featuring robotics demonstrations and science experiments.</p>
+                            <a href="#" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="#" class="btn btn-outline-primary">View All Events</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section testimonial-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Student Experiences</h2>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <p>"Being part of the debate team has completely transformed my confidence and critical thinking skills. The supportive environment at Mumbe allowed me to find my voice and represent our school in national competitions."</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Student">
+                            <div>
+                                <h5 class="mb-0">Sarah K.</h5>
+                                <p class="mb-0">Form 4 Student, Debate Team Captain</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <p>"The robotics club gave me the opportunity to apply what I learned in class to real-world problems. Our team's project won the regional competition, and I've developed skills that will help me pursue engineering in university."</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Student">
+                            <div>
+                                <h5 class="mb-0">David M.</h5>
+                                <p class="mb-0">Form 3 Student, Robotics Club</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <p>"As captain of the football team, I've learned invaluable lessons about leadership, teamwork, and perseverance. The sports program at Mumbe has helped me balance academics with athletics while developing character."</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Student">
+                            <div>
+                                <h5 class="mb-0">James O.</h5>
+                                <p class="mb-0">Form 4 Student, Football Team Captain</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <p>"Participating in the school musical was one of the highlights of my time at Mumbe. The arts program allowed me to discover my passion for performance while making lifelong friends in the process."</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Student">
+                            <div>
+                                <h5 class="mb-0">Amina S.</h5>
+                                <p class="mb-0">Form 3 Student, Drama Club</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="section gallery-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Life at Mumbe</h2>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        <div class="gallery-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        <div class="gallery-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        <div class="gallery-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        <div class="gallery-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        <div class="gallery-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        <div class="gallery-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Become Part of Our Community</h2>
+            <p>Experience the vibrant life at Mumbe Group of Schools. Join our community of learners, creators, and leaders.</p>
+            <a href="contact.html" class="btn btn-primary btn-lg me-3">Apply Now</a>
+            <a href="contact.html" class="btn btn-outline-light btn-lg">Schedule a Tour</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <img src="images/mja_school_logo.jpg" alt="Mumbe Schools Logo" class="footer-logo">
+                    <p class="mb-4">Providing quality education in Makindu, Kenya since 2002. The Fountain of Knowledge.</p>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                        </div>
+                        <p>Makindu, Makueni County, Kenya</p>
+                    </div>
+                    <div class="d-flex mb-4">
+                        <div class="me-3">
+                            <i class="fas fa-phone-alt me-2"></i>
+                        </div>
+                        <p>+254 712 345 678</p>
+                    </div>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-5 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="About.html">About Us</a></li>
+                        <li><a href="schools.html">Our Schools</a></li>
+                        <li><a href="Schoollife.html">School Life</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-4 mb-5 mb-md-0">
+                    <h5>Portals</h5>
+                    <a href="#" class="footer-btn">Parents Portal</a>
+                    <a href="#" class="footer-btn">Faculty Portal</a>
+                    <a href="#" class="footer-btn">Student Portal</a>
+                </div>
+                
+                <div class="col-lg-3 col-md-4">
+                    <h5>Newsletter</h5>
+                    <p class="mb-3">Subscribe to our newsletter for updates and announcements.</p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Your Email">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="mb-0">&copy; 2025 Mumbe Group of Schools. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple animation for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.life-card, .activity-card, .sport-card, .event-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
