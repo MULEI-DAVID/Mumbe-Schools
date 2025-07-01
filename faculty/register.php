@@ -1,5 +1,4 @@
 <?php
-// Database Configuration
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'mumbe_schools');
 define('DB_USER', 'root');

@@ -51,36 +51,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = "Email and password are required";
         } else {
             try {
-                $stmt = $conn->prepare("SELECT id, name, email, password_hash, status, last_login FROM faculty WHERE email = :email");
+                $stmt = $conn->prepare("SELECT id, full_name, email, password_hash, status, last_login, children_ids FROM parents WHERE email = :email");
                 $stmt->bindValue(':email', $email);
                 $stmt->execute();
-                $faculty = $stmt->fetch();
+                $parent = $stmt->fetch();
                 
-                if ($faculty) {
+                if ($parent) {
                     // Check account status
-                    if ($faculty['status'] === 'suspended') {
+                    if ($parent['status'] === 'suspended') {
                         $errors[] = "Your account has been suspended. Please contact administration.";
-                    } elseif ($faculty['status'] === 'pending') {
-                        $errors[] = "Your account is pending approval. Please contact administration.";
+                    } elseif ($parent['status'] === 'pending') {
+                        $errors[] = "Your account is pending approval. Please check your email for verification.";
                     } else {
                         // Verify password
-                        if (password_verify($password . PEPPER, $faculty['password_hash'])) {
+                        if (password_verify($password . PEPPER, $parent['password_hash'])) {
                             // Successful login
-                            $_SESSION['faculty_id'] = $faculty['id'];
-                            $_SESSION['faculty_name'] = $faculty['name'];
-                            $_SESSION['faculty_email'] = $faculty['email'];
-                            $_SESSION['last_login'] = $faculty['last_login'];
+                            $_SESSION['parent_id'] = $parent['id'];
+                            $_SESSION['parent_name'] = $parent['full_name'];
+                            $_SESSION['parent_email'] = $parent['email'];
+                            $_SESSION['children_ids'] = json_decode($parent['children_ids'], true);
+                            $_SESSION['last_login'] = $parent['last_login'];
                             
                             // Update last login
-                            $stmt = $conn->prepare("UPDATE faculty SET last_login = NOW() WHERE id = :id");
-                            $stmt->bindValue(':id', $faculty['id']);
+                            $stmt = $conn->prepare("UPDATE parents SET last_login = NOW() WHERE id = :id");
+                            $stmt->bindValue(':id', $parent['id']);
                             $stmt->execute();
                             
                             // Reset login attempts
                             unset($_SESSION[$lockout_key]);
                             
                             // Redirect to dashboard
-                            header("Location: faculty_dashboard.php");
+                            header("Location: parent_dashboard.php");
                             exit();
                         } else {
                             $errors[] = "Invalid email or password";
@@ -121,20 +122,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Login | Mumbe Group of Schools</title>
+    <title>Parent Portal Login | Mumbe Group of Schools</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Same styles as faculty login with minor color adjustments */
         :root {
-            --primary-blue: #1a4480;
-            --secondary-yellow: #daa520;
-            --accent-gold: #daa520;
+            --primary-green: #1a4480;
+            --secondary-teal: #daa520;
+            --accent-orange: #ff8f00;
             --dark: #333;
             --light: #f8f9fa;
         }
         
+        .navbar {
+            background: linear-gradient(to right, var(--primary-green), #1b5e20);
+        }
+        
+        .login-header {
+            background: linear-gradient(to right, var(--primary-green), #1b5e20);
+        }
+        
+        .form-label {
+            color: var(--primary-green);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-green), #1b5e20);
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+        }
+        
+        .last-login {
+            background: #e8f5e9;
+            border-left: 3px solid var(--primary-green);
+        }
+        
+        .school-logo {
+            background: linear-gradient(to right, var(--primary-green), #1b5e20);
+        }
+        
+        .school-logo i {
+            color: white;
+        }
+        
+        /* Keep other styles the same as faculty login */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--dark);
@@ -143,12 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-        }
-        
-        /* Header & Navigation */
-        .navbar {
-            background: linear-gradient(to right, var(--primary-blue), #0d2c52);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         
         .navbar-brand {
@@ -184,7 +216,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .login-header {
-            background: linear-gradient(to right, var(--primary-blue), #0d2c52);
             color: white;
             padding: 30px;
             text-align: center;
@@ -192,26 +223,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             overflow: hidden;
         }
         
-        .login-header::before {
+        .login-header::before, .login-header::after {
             content: "";
             position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
         }
         
+        .login-header::before {
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+        }
+        
         .login-header::after {
-            content: "";
-            position: absolute;
             bottom: -30px;
             left: -30px;
             width: 100px;
             height: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
         }
         
         .login-header h2 {
@@ -227,12 +257,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             z-index: 1;
         }
         
-        .form-label {
-            font-weight: 600;
-            color: var(--primary-blue);
-            margin-bottom: 5px;
-        }
-        
         .form-control {
             padding: 12px 15px;
             border-radius: 8px;
@@ -241,8 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .form-control:focus {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 0.25rem rgba(26, 68, 128, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
         }
         
         .password-container {
@@ -259,7 +282,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .btn-primary {
-            background: linear-gradient(to right, var(--primary-blue), #0d2c52);
             border: none;
             padding: 12px 30px;
             font-weight: 600;
@@ -267,7 +289,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 8px;
             width: 100%;
             font-size: 18px;
-            box-shadow: 0 4px 10px rgba(26, 68, 128, 0.3);
         }
         
         .btn-primary:hover {
@@ -285,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .footer {
-            background: linear-gradient(to right, #0a1a30, var(--primary-blue));
+            background: linear-gradient(to right, #0a1a30, #1b5e20);
             color: white;
             padding: 30px 0 15px;
             margin-top: auto;
@@ -299,7 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 0;
             width: 100%;
             height: 5px;
-            background: linear-gradient(to right, var(--secondary-yellow), var(--accent-gold));
+            background: linear-gradient(to right, var(--accent-orange), #ff8f00);
         }
         
         .footer-links a {
@@ -309,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .footer-links a:hover {
-            color: var(--secondary-yellow);
+            color: var(--accent-orange);
         }
         
         .login-links {
@@ -321,18 +342,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .login-links a {
-            color: var(--primary-blue);
+            color: var(--primary-green);
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s;
         }
         
         .login-links a:hover {
-            color: #0d2c52;
+            color: #1b5e20;
             text-decoration: underline;
         }
         
-        /* Background decoration */
         .bg-decoration {
             position: fixed;
             z-index: 0;
@@ -342,7 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 300px;
             height: 300px;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(26, 68, 128, 0.1) 0%, rgba(218, 165, 32, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(255, 143, 0, 0.1) 100%);
             top: -100px;
             right: -100px;
         }
@@ -351,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 200px;
             height: 200px;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(218, 165, 32, 0.1) 0%, rgba(26, 68, 128, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(255, 143, 0, 0.1) 0%, rgba(46, 125, 50, 0.1) 100%);
             bottom: 50px;
             left: -50px;
         }
@@ -360,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: rgba(26, 68, 128, 0.08);
+            background: rgba(46, 125, 50, 0.08);
             bottom: 150px;
             right: 100px;
         }
@@ -369,7 +389,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -379,16 +398,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         .school-logo i {
             font-size: 48px;
-            color: var(--primary-blue);
-        }
-        
-        .last-login {
-            background: #e8f4ff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: center;
-            border-left: 3px solid var(--primary-blue);
         }
     </style>
 </head>
@@ -402,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <div style="width: 40px; height: 40px; background: var(--secondary-yellow); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                <div style="width: 40px; height: 40px; background: var(--accent-orange); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
                     <i class="fas fa-school text-white"></i>
                 </div>
                 <span>Mumbe Group of Schools</span>
@@ -419,7 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a class="nav-link" href="#">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Faculty Portal</a>
+                        <a class="nav-link active" href="#">Parent Portal</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Contact</a>
@@ -434,10 +443,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="login-container">
             <div class="login-header">
                 <div class="school-logo">
-                    <i class="fas fa-chalkboard-teacher"></i>
+                    <i class="fas fa-users"></i>
                 </div>
-                <h2>Faculty Login</h2>
-                <p>Access your teaching resources and tools</p>
+                <h2>Parent Portal Login</h2>
+                <p>Access your children's academic information</p>
             </div>
             
             <div class="login-body">
@@ -452,11 +461,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 <?php endif; ?>
                 
-                <form method="POST" id="facultyLoginForm">
+                <form method="POST" id="parentLoginForm">
                     <div class="mb-4">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="email" class="form-control" id="email" name="email" 
-                               placeholder="Enter your school email" required
+                               placeholder="Enter your registered email" required
                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                                <?= $login_disabled ? 'disabled' : '' ?>>
                     </div>
@@ -479,19 +488,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <button type="submit" class="btn btn-primary mb-4" <?= $login_disabled ? 'disabled' : '' ?>>
-                        <i class="fas fa-sign-in-alt me-2"></i> Login to Dashboard
+                        <i class="fas fa-sign-in-alt me-2"></i> Access Parent Portal
                     </button>
                     
                     <div class="login-links">
-                        <a href="faculty_register.php">
-                            <i class="fas fa-user-plus me-1"></i> Create Account
+                        <a href="parent_register.php">
+                            <i class="fas fa-user-plus me-1"></i> Register Account
                         </a>
-                        <a href="faculty_forgot_password.php">
+                        <a href="parent_forgot_password.php">
                             <i class="fas fa-key me-1"></i> Forgot Password?
                         </a>
                     </div>
                     
-                    <?php if (isset($_SESSION['faculty_id']) && isset($_SESSION['last_login'])): ?>
+                    <?php if (isset($_SESSION['parent_id']) && isset($_SESSION['last_login'])): ?>
                         <div class="last-login">
                             <p><strong>Last successful login:</strong> <?= date('F j, Y, g:i a', strtotime($_SESSION['last_login'])) ?></p>
                         </div>
@@ -515,7 +524,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <ul class="list-unstyled footer-links">
                         <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Home</a></li>
                         <li><a href="#"><i class="fas fa-chevron-right me-2"></i> About Us</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Faculty Portal</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Parent Portal</a></li>
                         <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Contact</a></li>
                     </ul>
                 </div>
@@ -544,7 +553,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('email').focus();
             
             // Show last login info if available
-            <?php if (isset($_SESSION['faculty_id']) && isset($_SESSION['last_login'])): ?>
+            <?php if (isset($_SESSION['parent_id']) && isset($_SESSION['last_login'])): ?>
                 const lastLogin = document.querySelector('.last-login');
                 setTimeout(() => {
                     lastLogin.style.opacity = '1';

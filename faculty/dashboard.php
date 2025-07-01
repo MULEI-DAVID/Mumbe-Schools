@@ -1,62 +1,363 @@
 <?php
-// Start session and check authentication
+// Start session and include config
 session_start();
+require_once 'config.php';
 
-// Simulate faculty authentication
-if (!isset($_SESSION['faculty_logged_in'])) {
-    $_SESSION['faculty_logged_in'] = true;
-    $_SESSION['faculty_id'] = 1001;
-    $_SESSION['faculty_name'] = 'Dr. Sarah Johnson';
-    $_SESSION['faculty_department'] = 'Science Department';
-    $_SESSION['faculty_school'] = 'Mumbe High School';
-    $_SESSION['faculty_photo'] = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==';
+// Check if faculty is logged in
+if (!isset($_SESSION['faculty_id'])) {
+    header('Location: faculty_login.php');
+    exit();
 }
 
-// Database connection simulation
-$classes = [
-    ['id' => 1, 'name' => 'Form 3 Physics', 'students' => 42],
-    ['id' => 2, 'name' => 'Form 4 Physics', 'students' => 35],
-    ['id' => 3, 'name' => 'Form 2 Science', 'students' => 40],
-    ['id' => 4, 'name' => 'Form 1 Science', 'students' => 45]
-];
+// Database connection
+try {
+    $conn = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASS);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->exec("SET NAMES utf8mb4");
+} catch(PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
-$students = [
-    ['id' => 1, 'admission_no' => 'S00123', 'name' => 'John Kamau', 'class_id' => 1],
-    ['id' => 2, 'admission_no' => 'S00124', 'name' => 'Mary Wanjiku', 'class_id' => 1],
-    ['id' => 3, 'admission_no' => 'S00125', 'name' => 'Peter Otieno', 'class_id' => 1],
-    ['id' => 4, 'admission_no' => 'S00126', 'name' => 'Jane Akinyi', 'class_id' => 2],
-    ['id' => 5, 'admission_no' => 'S00127', 'name' => 'David Mwangi', 'class_id' => 2],
-    ['id' => 6, 'admission_no' => 'S00128', 'name' => 'Grace Wambui', 'class_id' => 3],
-    ['id' => 7, 'admission_no' => 'S00129', 'name' => 'James Mutua', 'class_id' => 4]
-];
+// Get faculty data
+$faculty_id = $_SESSION['faculty_id'];
+$stmt = $conn->prepare("SELECT * FROM faculty WHERE id = :id");
+$stmt->bindParam(':id', $faculty_id, PDO::PARAM_INT);
+$stmt->execute();
+$faculty = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$assignments = [
-    ['id' => 1, 'title' => 'Physics Project - Forces', 'due_date' => 'Sep 20, 2023', 'class_id' => 1],
-    ['id' => 2, 'title' => 'Chemistry Lab Report', 'due_date' => 'Sep 15, 2023', 'class_id' => 2],
-    ['id' => 3, 'title' => 'Science Quiz 2', 'due_date' => 'Sep 10, 2023', 'class_id' => 3]
-];
-
-$notifications = [
-    ['id' => 1, 'type' => 'assignment', 'text' => 'New assignment submitted by John Kamau', 'time' => '2 hours ago'],
-    ['id' => 2, 'type' => 'message', 'text' => 'New message from James Mutua', 'time' => '5 hours ago'],
-    ['id' => 3, 'type' => 'event', 'text' => 'Staff meeting reminder: Tomorrow at 10 AM', 'time' => '1 day ago']
-];
+if (!$faculty) {
+    session_destroy();
+    header('Location: faculty_login.php');
+    exit();
+}
 
 // Determine current section
 $sections = ['dashboard', 'classes', 'students', 'attendance', 'assignments', 'grades', 'timetable', 'messages', 'resources', 'profile'];
 $current_section = isset($_GET['section']) && in_array($_GET['section'], $sections) ? $_GET['section'] : 'dashboard';
 
+// Handle form submissions
+$messages = [];
+
+// Handle profile update
+if (isset($_POST['update_profile'])) {
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
+    $qualifications = trim($_POST['qualifications']);
+    
+    $errors = [];
+    if (empty($name)) $errors[] = "Name is required";
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email format";
+    
+    if (empty($errors)) {
+        try {
+            $sql = "UPDATE faculty SET name = :name, email = :email, phone = :phone, qualifications = :qualifications WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([
+                ':name' => $name,
+                ':email' => $email,
+                ':phone' => $phone,
+                ':qualifications' => $qualifications,
+                ':id' => $faculty_id
+            ]);
+            
+            // Update session data
+            $_SESSION['faculty_name'] = $name;
+            $_SESSION['faculty_email'] = $email;
+            
+            $messages[] = [
+                'type' => 'success',
+                'text' => "Profile updated successfully!"
+            ];
+            
+            // Refresh faculty data
+            $stmt = $conn->prepare("SELECT * FROM faculty WHERE id = :id");
+            $stmt->bindParam(':id', $faculty_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+        } catch(PDOException $e) {
+            $messages[] = [
+                'type' => 'danger',
+                'text' => "Error updating profile: " . $e->getMessage()
+            ];
+        }
+    } else {
+        $messages[] = [
+            'type' => 'danger',
+            'text' => implode("<br>", $errors)
+        ];
+    }
+}
+
 // Handle grade submission
-$grade_message = '';
 if (isset($_POST['add_grade'])) {
-    $grade_message = "Grade for student ID {$_POST['student_id']} on assignment ID {$_POST['assignment_id']} saved successfully!";
+    $student_id = (int)$_POST['student_id'];
+    $assignment_id = (int)$_POST['assignment_id'];
+    $grade = (float)$_POST['grade'];
+    $comments = trim($_POST['comments']);
+    
+    $errors = [];
+    if ($student_id <= 0) $errors[] = "Student is required";
+    if ($assignment_id <= 0) $errors[] = "Assignment is required";
+    if ($grade < 0 || $grade > 100) $errors[] = "Grade must be between 0 and 100";
+    
+    if (empty($errors)) {
+        try {
+            // Check if grade exists
+            $stmt = $conn->prepare("SELECT id FROM student_assignments WHERE student_id = :student_id AND assignment_id = :assignment_id");
+            $stmt->execute([
+                ':student_id' => $student_id,
+                ':assignment_id' => $assignment_id
+            ]);
+            
+            if ($stmt->rowCount() > 0) {
+                // Update existing grade
+                $sql = "UPDATE student_assignments SET points_earned = :grade, comments = :comments, status = 'graded' 
+                        WHERE student_id = :student_id AND assignment_id = :assignment_id";
+            } else {
+                // Insert new grade
+                $sql = "INSERT INTO student_assignments (student_id, assignment_id, points_earned, comments, status, submitted_at) 
+                        VALUES (:student_id, :assignment_id, :grade, :comments, 'graded', NOW())";
+            }
+            
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([
+                ':student_id' => $student_id,
+                ':assignment_id' => $assignment_id,
+                ':grade' => $grade,
+                ':comments' => $comments
+            ]);
+            
+            $messages[] = [
+                'type' => 'success',
+                'text' => "Grade saved successfully!"
+            ];
+            
+        } catch(PDOException $e) {
+            $messages[] = [
+                'type' => 'danger',
+                'text' => "Error saving grade: " . $e->getMessage()
+            ];
+        }
+    } else {
+        $messages[] = [
+            'type' => 'danger',
+            'text' => implode("<br>", $errors)
+        ];
+    }
 }
 
 // Handle attendance submission
 if (isset($_POST['mark_attendance'])) {
-    $attendance_message = "Attendance for {$_POST['class_id']} on {$_POST['attendance_date']} marked successfully!";
+    $class_id = (int)$_POST['class_id'];
+    $attendance_date = $_POST['attendance_date'];
+    $statuses = $_POST['status'] ?? [];
+    
+    $errors = [];
+    if ($class_id <= 0) $errors[] = "Class is required";
+    if (empty($attendance_date)) $errors[] = "Date is required";
+    
+    if (empty($errors)) {
+        try {
+            // Begin transaction
+            $conn->beginTransaction();
+            
+            // Get all students in the class
+            $stmt = $conn->prepare("
+                SELECT s.id 
+                FROM students s
+                JOIN class_students cs ON s.id = cs.student_id
+                WHERE cs.class_id = :class_id
+            ");
+            $stmt->execute([':class_id' => $class_id]);
+            $students = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            
+            // Record attendance for each student
+            foreach ($students as $student_id) {
+                $status = isset($statuses[$student_id]) ? $statuses[$student_id] : 'absent';
+                
+                // Check if attendance already exists
+                $stmt = $conn->prepare("
+                    SELECT id FROM attendance 
+                    WHERE student_id = :student_id 
+                    AND course_id = (SELECT course_id FROM classes WHERE id = :class_id)
+                    AND date = :date
+                ");
+                $stmt->execute([
+                    ':student_id' => $student_id,
+                    ':class_id' => $class_id,
+                    ':date' => $attendance_date
+                ]);
+                
+                if ($stmt->rowCount() > 0) {
+                    // Update existing attendance
+                    $sql = "UPDATE attendance SET present = :present WHERE id = :id";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute([
+                        ':present' => ($status === 'present' || $status === 'late') ? 1 : 0,
+                        ':id' => $stmt->fetchColumn()
+                    ]);
+                } else {
+                    // Insert new attendance
+                    $sql = "INSERT INTO attendance (student_id, course_id, date, present, recorded_by) 
+                            VALUES (:student_id, 
+                                    (SELECT course_id FROM classes WHERE id = :class_id), 
+                                    :date, 
+                                    :present, 
+                                    :recorded_by)";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute([
+                        ':student_id' => $student_id,
+                        ':class_id' => $class_id,
+                        ':date' => $attendance_date,
+                        ':present' => ($status === 'present' || $status === 'late') ? 1 : 0,
+                        ':recorded_by' => $faculty_id
+                    ]);
+                }
+            }
+            
+            $conn->commit();
+            
+            $messages[] = [
+                'type' => 'success',
+                'text' => "Attendance marked successfully!"
+            ];
+            
+        } catch(PDOException $e) {
+            $conn->rollBack();
+            $messages[] = [
+                'type' => 'danger',
+                'text' => "Error saving attendance: " . $e->getMessage()
+            ];
+        }
+    } else {
+        $messages[] = [
+            'type' => 'danger',
+            'text' => implode("<br>", $errors)
+        ];
+    }
 }
+
+// Fetch data for dashboard
+$stats = [];
+$classes = [];
+$students = [];
+$assignments = [];
+$notifications = [];
+$timetable = [];
+
+try {
+    // Dashboard statistics
+    $stmt = $conn->prepare("
+        SELECT 
+            (SELECT COUNT(*) FROM class_students cs 
+             JOIN classes c ON cs.class_id = c.id 
+             WHERE c.teacher_id = :faculty_id) AS total_students,
+            (SELECT COUNT(*) FROM assignments 
+             WHERE teacher_id = :faculty_id AND due_date >= CURDATE()) AS active_assignments,
+            (SELECT ROUND(AVG(present)*100) FROM attendance 
+             WHERE recorded_by = :faculty_id AND date = CURDATE()) AS attendance_rate,
+            (SELECT COUNT(*) FROM events 
+             WHERE created_by = :faculty_id AND event_date >= CURDATE()) AS upcoming_events
+    ");
+    $stmt->execute([':faculty_id' => $faculty_id]);
+    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Faculty classes
+    $stmt = $conn->prepare("
+        SELECT c.id, c.name, co.title AS course_name, COUNT(cs.student_id) AS student_count
+        FROM classes c
+        JOIN courses co ON c.course_id = co.id
+        LEFT JOIN class_students cs ON c.id = cs.class_id
+        WHERE c.teacher_id = :faculty_id
+        GROUP BY c.id
+    ");
+    $stmt->execute([':faculty_id' => $faculty_id]);
+    $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Recent assignments
+    $stmt = $conn->prepare("
+        SELECT a.id, a.title, c.name AS class_name, a.due_date, 
+               COUNT(sa.id) AS submission_count,
+               (SELECT COUNT(*) FROM class_students WHERE class_id = a.class_id) AS total_students
+        FROM assignments a
+        JOIN classes c ON a.class_id = c.id
+        LEFT JOIN student_assignments sa ON a.id = sa.assignment_id
+        WHERE c.teacher_id = :faculty_id
+        GROUP BY a.id
+        ORDER BY a.due_date ASC
+        LIMIT 5
+    ");
+    $stmt->execute([':faculty_id' => $faculty_id]);
+    $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Notifications
+    $stmt = $conn->prepare("
+        (SELECT 'assignment' AS type, a.title AS text, a.created_at AS time
+         FROM assignments a
+         JOIN classes c ON a.class_id = c.id
+         WHERE c.teacher_id = :faculty_id
+         ORDER BY a.created_at DESC
+         LIMIT 3)
+        UNION
+        (SELECT 'message' AS type, m.subject AS text, m.sent_at AS time
+         FROM messages m
+         WHERE m.recipient_id = :faculty_id AND m.recipient_type = 'faculty'
+         ORDER BY m.sent_at DESC
+         LIMIT 3)
+        ORDER BY time DESC
+        LIMIT 5
+    ");
+    $stmt->execute([':faculty_id' => $faculty_id]);
+    $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Timetable
+    $stmt = $conn->prepare("
+        SELECT c.id, c.name, cl.day_of_week, cl.start_time, cl.end_time
+        FROM class_schedule cl
+        JOIN classes c ON cl.class_id = c.id
+        WHERE c.teacher_id = :faculty_id
+        ORDER BY FIELD(cl.day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+                 cl.start_time
+    ");
+    $stmt->execute([':faculty_id' => $faculty_id]);
+    $schedule = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Organize timetable by day
+    $timetable = [];
+    foreach ($schedule as $item) {
+        $day = $item['day_of_week'];
+        if (!isset($timetable[$day])) {
+            $timetable[$day] = [];
+        }
+        $timetable[$day][] = $item;
+    }
+    
+    // Students for specific class (if requested)
+    if (isset($_GET['class_id']) && is_numeric($_GET['class_id'])) {
+        $class_id = (int)$_GET['class_id'];
+        $stmt = $conn->prepare("
+            SELECT s.id, s.name, s.admission_number
+            FROM students s
+            JOIN class_students cs ON s.id = cs.student_id
+            WHERE cs.class_id = :class_id
+        ");
+        $stmt->execute([':class_id' => $class_id]);
+        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+} catch(PDOException $e) {
+    $messages[] = [
+        'type' => 'danger',
+        'text' => "Error fetching data: " . $e->getMessage()
+    ];
+}
+
+// Get today's date for forms
+$today = date('Y-m-d');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,11 +366,11 @@ if (isset($_POST['mark_attendance'])) {
     <title>Faculty Dashboard | Mumbe Group of Schools</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
             --primary-blue: #1a4480;
             --secondary-yellow: #daa520;
-            --accent-gold: #daa520;
             --light-gray: #f5f7fa;
             --dark: #333;
             --success: #28a745;
@@ -122,6 +423,7 @@ if (isset($_POST['mark_attendance'])) {
             border-radius: 50%;
             border: 3px solid var(--secondary-yellow);
             margin-bottom: 15px;
+            object-fit: cover;
         }
         
         .sidebar-header h4 {
@@ -223,6 +525,7 @@ if (isset($_POST['mark_attendance'])) {
             height: 40px;
             border-radius: 50%;
             border: 2px solid var(--secondary-yellow);
+            object-fit: cover;
         }
         
         /* Content Area */
@@ -558,6 +861,15 @@ if (isset($_POST['mark_attendance'])) {
             margin-bottom: 20px;
         }
         
+        .alert-danger {
+            background: linear-gradient(to right, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
         .grade-form {
             background: white;
             border-radius: 10px;
@@ -664,6 +976,62 @@ if (isset($_POST['mark_attendance'])) {
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             padding: 25px;
         }
+        
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .welcome-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .welcome-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+        
+        .welcome-icon {
+            font-size: 64px;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+        
+        .attendance-status {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .attendance-status label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .first-name {
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -671,10 +1039,10 @@ if (isset($_POST['mark_attendance'])) {
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <img src="<?= $_SESSION['faculty_photo'] ?>" alt="Faculty Photo">
-                <h4><?= $_SESSION['faculty_name'] ?></h4>
-                <p><?= $_SESSION['faculty_department'] ?></p>
-                <p><?= $_SESSION['faculty_school'] ?></p>
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" alt="Faculty Photo">
+                <h4><?= htmlspecialchars($faculty['name']) ?></h4>
+                <p><?= htmlspecialchars($faculty['department'] ?? 'Department') ?></p>
+                <p>Mumbe Group of Schools</p>
             </div>
             
             <div class="sidebar-menu">
@@ -777,26 +1145,26 @@ if (isset($_POST['mark_attendance'])) {
                                         ?>"></i>
                                     </div>
                                     <div class="notification-content">
-                                        <p class="mb-1"><?= $notification['text'] ?></p>
-                                        <small class="notification-time"><?= $notification['time'] ?></small>
+                                        <p class="mb-1"><?= htmlspecialchars($notification['text']) ?></p>
+                                        <small class="notification-time"><?= date('M j, g:i a', strtotime($notification['time'])) ?></small>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                             <div class="text-center mt-2">
-                                <a href="#" class="text-primary">View All Notifications</a>
+                                <a href="?section=messages" class="text-primary">View All Notifications</a>
                             </div>
                         </div>
                     </div>
                     
                     <div class="user-profile" id="profileBtn">
-                        <img src="<?= $_SESSION['faculty_photo'] ?>" alt="User Photo">
-                        <span><?= explode(' ', $_SESSION['faculty_name'])[0] ?></span>
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" alt="User Photo">
+                        <span><?= explode(' ', $faculty['name'])[0] ?></span>
                         
                         <div class="profile-dropdown" id="profileDropdown">
                             <div class="p-3 text-center">
-                                <img src="<?= $_SESSION['faculty_photo'] ?>" alt="User Photo" class="mb-2" width="80" height="80" style="border-radius: 50%; border: 2px solid var(--secondary-yellow);">
-                                <h5 class="mb-0"><?= $_SESSION['faculty_name'] ?></h5>
-                                <p class="text-muted mb-0"><?= $_SESSION['faculty_department'] ?></p>
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" class="mb-2" width="80" height="80" style="border-radius: 50%; border: 2px solid var(--secondary-yellow);">
+                                <h5 class="mb-0"><?= htmlspecialchars($faculty['name']) ?></h5>
+                                <p class="text-muted mb-0"><?= htmlspecialchars($faculty['department'] ?? 'Department') ?></p>
                             </div>
                             
                             <div class="dropdown-divider"></div>
@@ -821,20 +1189,22 @@ if (isset($_POST['mark_attendance'])) {
             
             <!-- Content Area -->
             <div class="content-area">
+                <!-- Display messages -->
+                <?php foreach ($messages as $message): ?>
+                    <div class="alert alert-<?= $message['type'] ?>">
+                        <i class="fas <?= $message['type'] === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle' ?> me-2"></i>
+                        <?= $message['text'] ?>
+                    </div>
+                <?php endforeach; ?>
+                
                 <!-- Dashboard Section -->
                 <div class="dashboard-section <?= $current_section === 'dashboard' ? 'active' : '' ?>" id="dashboard">
-                    <?php if (!empty($grade_message)): ?>
-                        <div class="alert-success">
-                            <i class="fas fa-check-circle me-2"></i> <?= $grade_message ?>
-                        </div>
-                    <?php endif; ?>
-                    
                     <div class="stats-grid mb-4">
                         <div class="stat-card">
                             <div class="stat-icon">
                                 <i class="fas fa-users"></i>
                             </div>
-                            <div class="stat-value">142</div>
+                            <div class="stat-value"><?= $stats['total_students'] ?? 0 ?></div>
                             <div class="stat-label">Total Students</div>
                         </div>
                         
@@ -842,7 +1212,7 @@ if (isset($_POST['mark_attendance'])) {
                             <div class="stat-icon">
                                 <i class="fas fa-book"></i>
                             </div>
-                            <div class="stat-value">12</div>
+                            <div class="stat-value"><?= $stats['active_assignments'] ?? 0 ?></div>
                             <div class="stat-label">Active Assignments</div>
                         </div>
                         
@@ -850,7 +1220,7 @@ if (isset($_POST['mark_attendance'])) {
                             <div class="stat-icon">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>
-                            <div class="stat-value">93%</div>
+                            <div class="stat-value"><?= $stats['attendance_rate'] ?? 0 ?>%</div>
                             <div class="stat-label">Attendance Rate</div>
                         </div>
                         
@@ -858,7 +1228,7 @@ if (isset($_POST['mark_attendance'])) {
                             <div class="stat-icon">
                                 <i class="fas fa-calendar"></i>
                             </div>
-                            <div class="stat-value">3</div>
+                            <div class="stat-value"><?= $stats['upcoming_events'] ?? 0 ?></div>
                             <div class="stat-label">Upcoming Events</div>
                         </div>
                     </div>
@@ -874,9 +1244,10 @@ if (isset($_POST['mark_attendance'])) {
                                     <div class="attendance-grid">
                                         <?php foreach ($classes as $class): ?>
                                             <div class="class-card">
-                                                <div class="class-header"><?= $class['name'] ?></div>
+                                                <div class="class-header"><?= htmlspecialchars($class['name']) ?></div>
                                                 <div class="class-body">
-                                                    <p class="mb-3"><?= $class['students'] ?> students</p>
+                                                    <p class="mb-3"><?= htmlspecialchars($class['course_name']) ?></p>
+                                                    <p><?= $class['student_count'] ?> students</p>
                                                     <div class="class-stats">
                                                         <div class="class-stat">
                                                             <div class="class-stat-value">85%</div>
@@ -944,27 +1315,15 @@ if (isset($_POST['mark_attendance'])) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Physics Project - Forces</td>
-                                        <td>Form 3 Physics</td>
-                                        <td>Sep 20, 2023</td>
-                                        <td>32/42</td>
-                                        <td><span class="badge bg-success">Active</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chemistry Lab Report</td>
-                                        <td>Form 4 Physics</td>
-                                        <td>Sep 15, 2023</td>
-                                        <td>28/35</td>
-                                        <td><span class="badge bg-warning">Grading</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Science Quiz 2</td>
-                                        <td>Form 2 Science</td>
-                                        <td>Sep 10, 2023</td>
-                                        <td>40/40</td>
-                                        <td><span class="badge bg-secondary">Completed</span></td>
-                                    </tr>
+                                    <?php foreach ($assignments as $assignment): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($assignment['title']) ?></td>
+                                            <td><?= htmlspecialchars($assignment['class_name']) ?></td>
+                                            <td><?= date('M j, Y', strtotime($assignment['due_date'])) ?></td>
+                                            <td><?= $assignment['submission_count'] ?>/<?= $assignment['total_students'] ?></td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -977,9 +1336,10 @@ if (isset($_POST['mark_attendance'])) {
                     <div class="attendance-grid">
                         <?php foreach ($classes as $class): ?>
                             <div class="class-card">
-                                <div class="class-header"><?= $class['name'] ?></div>
+                                <div class="class-header"><?= htmlspecialchars($class['name']) ?></div>
                                 <div class="class-body">
-                                    <p class="mb-3"><?= $class['students'] ?> students</p>
+                                    <p class="mb-3"><?= htmlspecialchars($class['course_name']) ?></p>
+                                    <p><?= $class['student_count'] ?> students</p>
                                     <div class="class-stats">
                                         <div class="class-stat">
                                             <div class="class-stat-value">85%</div>
@@ -1006,13 +1366,15 @@ if (isset($_POST['mark_attendance'])) {
                     
                     <?php if (isset($_GET['class_id'])): ?>
                         <?php 
-                        $class_id = $_GET['class_id'];
-                        $class_name = $classes[$class_id-1]['name'];
+                        $class_id = (int)$_GET['class_id'];
+                        $class_stmt = $conn->prepare("SELECT name FROM classes WHERE id = :id");
+                        $class_stmt->execute([':id' => $class_id]);
+                        $class_name = $class_stmt->fetchColumn();
                         ?>
                         <div class="dashboard-card">
                             <div class="card-header">
                                 <i class="fas fa-users"></i>
-                                <span>Class: <?= $class_name ?></span>
+                                <span>Class: <?= htmlspecialchars($class_name) ?></span>
                             </div>
                             <div class="card-body">
                                 <table class="dashboard-table">
@@ -1026,23 +1388,21 @@ if (isset($_POST['mark_attendance'])) {
                                     </thead>
                                     <tbody>
                                         <?php foreach ($students as $student): ?>
-                                            <?php if ($student['class_id'] == $class_id): ?>
-                                                <tr>
-                                                    <td><?= $student['admission_no'] ?></td>
-                                                    <td><?= $student['name'] ?></td>
-                                                    <td>
-                                                        <div class="progress" style="height: 8px;">
-                                                            <div class="progress-bar bg-success" style="width: 85%"></div>
-                                                        </div>
-                                                        <small>85% Average</small>
-                                                    </td>
-                                                    <td>
-                                                        <a href="?section=grades&student_id=<?= $student['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                                            <i class="fas fa-chart-bar me-1"></i> Grades
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            <?php endif; ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($student['admission_number']) ?></td>
+                                                <td><?= htmlspecialchars($student['name']) ?></td>
+                                                <td>
+                                                    <div class="progress" style="height: 8px;">
+                                                        <div class="progress-bar bg-success" style="width: 85%"></div>
+                                                    </div>
+                                                    <small>85% Average</small>
+                                                </td>
+                                                <td>
+                                                    <a href="?section=grades&student_id=<?= $student['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-chart-bar me-1"></i> Grades
+                                                    </a>
+                                                </td>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
@@ -1060,12 +1420,6 @@ if (isset($_POST['mark_attendance'])) {
                 <div class="dashboard-section <?= $current_section === 'attendance' ? 'active' : '' ?>" id="attendance">
                     <h3 class="mb-4">Attendance Management</h3>
                     
-                    <?php if (isset($attendance_message)): ?>
-                        <div class="alert-success">
-                            <i class="fas fa-check-circle me-2"></i> <?= $attendance_message ?>
-                        </div>
-                    <?php endif; ?>
-                    
                     <div class="attendance-form">
                         <form method="POST">
                             <div class="row mb-4">
@@ -1074,13 +1428,13 @@ if (isset($_POST['mark_attendance'])) {
                                     <select class="form-select" id="class_id" name="class_id" required>
                                         <option value="">Select Class</option>
                                         <?php foreach ($classes as $class): ?>
-                                            <option value="<?= $class['id'] ?>"><?= $class['name'] ?></option>
+                                            <option value="<?= $class['id'] ?>"><?= htmlspecialchars($class['name']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="attendance_date" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="attendance_date" name="attendance_date" required>
+                                    <input type="date" class="form-control" id="attendance_date" name="attendance_date" required value="<?= $today ?>">
                                 </div>
                             </div>
                             
@@ -1099,22 +1453,39 @@ if (isset($_POST['mark_attendance'])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php for ($i=1; $i<=5; $i++): ?>
+                                            <?php if (isset($_GET['class_id'])): ?>
+                                                <?php foreach ($students as $student): ?>
+                                                    <tr>
+                                                        <td>
+                                                            <span class="first-name"><?= explode(' ', $student['name'])[0] ?></span>
+                                                            <?= htmlspecialchars($student['name']) ?>
+                                                        </td>
+                                                        <td>
+                                                            <div class="attendance-status">
+                                                                <label>
+                                                                    <input type="radio" name="status[<?= $student['id'] ?>]" value="present" checked>
+                                                                    Present
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" name="status[<?= $student['id'] ?>]" value="absent">
+                                                                    Absent
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" name="status[<?= $student['id'] ?>]" value="late">
+                                                                    Late
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" name="notes[<?= $student['id'] ?>]" placeholder="Notes">
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
                                                 <tr>
-                                                    <td>Student <?= $i ?></td>
-                                                    <td>
-                                                        <select class="form-select" name="attendance_status[]">
-                                                            <option value="present">Present</option>
-                                                            <option value="absent">Absent</option>
-                                                            <option value="late">Late</option>
-                                                            <option value="excused">Excused</option>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control" name="attendance_notes[]" placeholder="Notes">
-                                                    </td>
+                                                    <td colspan="3" class="text-center">Select a class to view students</td>
                                                 </tr>
-                                            <?php endfor; ?>
+                                            <?php endif; ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -1152,10 +1523,10 @@ if (isset($_POST['mark_attendance'])) {
                                         <tbody>
                                             <?php foreach ($assignments as $assignment): ?>
                                                 <tr>
-                                                    <td><?= $assignment['title'] ?></td>
-                                                    <td><?= $classes[$assignment['class_id']-1]['name'] ?></td>
-                                                    <td><?= $assignment['due_date'] ?></td>
-                                                    <td>32/42</td>
+                                                    <td><?= htmlspecialchars($assignment['title']) ?></td>
+                                                    <td><?= htmlspecialchars($assignment['class_name']) ?></td>
+                                                    <td><?= date('M j, Y', strtotime($assignment['due_date'])) ?></td>
+                                                    <td><?= $assignment['submission_count'] ?>/<?= $assignment['total_students'] ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-outline-primary">
                                                             <i class="fas fa-eye me-1"></i> View
@@ -1176,38 +1547,38 @@ if (isset($_POST['mark_attendance'])) {
                                     <span>Create New Assignment</span>
                                 </div>
                                 <div class="card-body">
-                                    <form>
+                                    <form method="POST">
                                         <div class="mb-3">
                                             <label for="assignment_title" class="form-label">Title</label>
-                                            <input type="text" class="form-control" id="assignment_title" required>
+                                            <input type="text" class="form-control" id="assignment_title" name="assignment_title" required>
                                         </div>
                                         
                                         <div class="mb-3">
                                             <label for="assignment_class" class="form-label">Class</label>
-                                            <select class="form-select" id="assignment_class" required>
+                                            <select class="form-select" id="assignment_class" name="assignment_class" required>
                                                 <option value="">Select Class</option>
                                                 <?php foreach ($classes as $class): ?>
-                                                    <option value="<?= $class['id'] ?>"><?= $class['name'] ?></option>
+                                                    <option value="<?= $class['id'] ?>"><?= htmlspecialchars($class['name']) ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
                                         
                                         <div class="mb-3">
                                             <label for="due_date" class="form-label">Due Date</label>
-                                            <input type="date" class="form-control" id="due_date" required>
+                                            <input type="date" class="form-control" id="due_date" name="due_date" required>
                                         </div>
                                         
                                         <div class="mb-3">
                                             <label for="assignment_desc" class="form-label">Description</label>
-                                            <textarea class="form-control" id="assignment_desc" rows="3"></textarea>
+                                            <textarea class="form-control" id="assignment_desc" name="assignment_desc" rows="3"></textarea>
                                         </div>
                                         
                                         <div class="mb-3">
                                             <label for="assignment_file" class="form-label">Attach File</label>
-                                            <input type="file" class="form-control" id="assignment_file">
+                                            <input type="file" class="form-control" id="assignment_file" name="assignment_file">
                                         </div>
                                         
-                                        <button type="submit" class="btn-mumbe w-100">
+                                        <button type="submit" name="create_assignment" class="btn-mumbe w-100">
                                             <i class="fas fa-plus me-2"></i> Create Assignment
                                         </button>
                                     </form>
@@ -1221,17 +1592,17 @@ if (isset($_POST['mark_attendance'])) {
                 <div class="dashboard-section <?= $current_section === 'grades' ? 'active' : '' ?>" id="grades">
                     <h3 class="mb-4">Grade Management</h3>
                     
-                    <?php if (!empty($grade_message)): ?>
-                        <div class="alert-success">
-                            <i class="fas fa-check-circle me-2"></i> <?= $grade_message ?>
-                        </div>
-                    <?php endif; ?>
-                    
                     <?php if (isset($_GET['student_id'])): ?>
+                        <?php 
+                        $student_id = (int)$_GET['student_id'];
+                        $stmt = $conn->prepare("SELECT name, admission_number FROM students WHERE id = :id");
+                        $stmt->execute([':id' => $student_id]);
+                        $student = $stmt->fetch(PDO::FETCH_ASSOC);
+                        ?>
                         <div class="dashboard-card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-user-graduate"></i>
-                                <span>Student: John Kamau (S00123)</span>
+                                <span>Student: <?= htmlspecialchars($student['name']) ?> (<?= htmlspecialchars($student['admission_number']) ?>)</span>
                             </div>
                             <div class="card-body">
                                 <h5 class="mb-3">Current Grades</h5>
@@ -1285,8 +1656,24 @@ if (isset($_POST['mark_attendance'])) {
                                         <label for="student_id" class="form-label">Student</label>
                                         <select class="form-select" id="student_id" name="student_id" required>
                                             <option value="">Select Student</option>
-                                            <?php foreach ($students as $student): ?>
-                                                <option value="<?= $student['id'] ?>"><?= $student['name'] ?> (<?= $student['admission_no'] ?>)</option>
+                                            <?php 
+                                            // Get all students taught by this faculty
+                                            $stmt = $conn->prepare("
+                                                SELECT s.id, s.name, s.admission_number
+                                                FROM students s
+                                                JOIN class_students cs ON s.id = cs.student_id
+                                                JOIN classes c ON cs.class_id = c.id
+                                                WHERE c.teacher_id = :faculty_id
+                                            ");
+                                            $stmt->execute([':faculty_id' => $faculty_id]);
+                                            $all_students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                            
+                                            foreach ($all_students as $student): 
+                                                $selected = isset($_GET['student_id']) && $_GET['student_id'] == $student['id'] ? 'selected' : '';
+                                            ?>
+                                                <option value="<?= $student['id'] ?>" <?= $selected ?>>
+                                                    <?= htmlspecialchars($student['name']) ?> (<?= htmlspecialchars($student['admission_number']) ?>)
+                                                </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -1294,8 +1681,21 @@ if (isset($_POST['mark_attendance'])) {
                                         <label for="assignment_id" class="form-label">Assignment</label>
                                         <select class="form-select" id="assignment_id" name="assignment_id" required>
                                             <option value="">Select Assignment</option>
-                                            <?php foreach ($assignments as $assignment): ?>
-                                                <option value="<?= $assignment['id'] ?>"><?= $assignment['title'] ?> (Due: <?= $assignment['due_date'] ?>)</option>
+                                            <?php 
+                                            // Get all assignments created by this faculty
+                                            $stmt = $conn->prepare("
+                                                SELECT a.id, a.title, c.name AS class_name, a.due_date
+                                                FROM assignments a
+                                                JOIN classes c ON a.class_id = c.id
+                                                WHERE c.teacher_id = :faculty_id
+                                            ");
+                                            $stmt->execute([':faculty_id' => $faculty_id]);
+                                            $all_assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                            
+                                            foreach ($all_assignments as $assignment): ?>
+                                                <option value="<?= $assignment['id'] ?>">
+                                                    <?= htmlspecialchars($assignment['title']) ?> (Due: <?= date('M j, Y', strtotime($assignment['due_date'])) ?>)
+                                                </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -1304,7 +1704,7 @@ if (isset($_POST['mark_attendance'])) {
                                 <div class="row mb-4">
                                     <div class="col-md-6">
                                         <label for="grade" class="form-label">Grade (0-100)</label>
-                                        <input type="number" class="form-control" id="grade" name="grade" min="0" max="100" required>
+                                        <input type="number" class="form-control" id="grade" name="grade" min="0" max="100" required step="0.01">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="comments" class="form-label">Comments</label>
@@ -1330,77 +1730,24 @@ if (isset($_POST['mark_attendance'])) {
                     <h3 class="mb-4">Teaching Timetable</h3>
                     
                     <div class="timetable-grid">
-                        <div class="timetable-card">
-                            <div class="timetable-day">Monday</div>
-                            <div class="timetable-item">
-                                <span>8:00 AM - 9:00 AM</span>
-                                <span>Form 3 Physics</span>
+                        <?php 
+                        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                        foreach ($days as $day): 
+                            if (isset($timetable[$day]) && count($timetable[$day]) > 0): 
+                        ?>
+                            <div class="timetable-card">
+                                <div class="timetable-day"><?= $day ?></div>
+                                <?php foreach ($timetable[$day] as $item): ?>
+                                    <div class="timetable-item">
+                                        <span><?= date('g:i A', strtotime($item['start_time'])) ?> - <?= date('g:i A', strtotime($item['end_time'])) ?></span>
+                                        <span><?= htmlspecialchars($item['name']) ?></span>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
-                            <div class="timetable-item">
-                                <span>10:00 AM - 11:00 AM</span>
-                                <span>Form 4 Physics</span>
-                            </div>
-                            <div class="timetable-item">
-                                <span>1:00 PM - 2:00 PM</span>
-                                <span>Form 2 Science</span>
-                            </div>
-                        </div>
-                        
-                        <div class="timetable-card">
-                            <div class="timetable-day">Tuesday</div>
-                            <div class="timetable-item">
-                                <span>9:00 AM - 10:00 AM</span>
-                                <span>Form 1 Science</span>
-                            </div>
-                            <div class="timetable-item">
-                                <span>11:00 AM - 12:00 PM</span>
-                                <span>Form 3 Physics Lab</span>
-                            </div>
-                        </div>
-                        
-                        <div class="timetable-card">
-                            <div class="timetable-day">Wednesday</div>
-                            <div class="timetable-item">
-                                <span>8:00 AM - 9:00 AM</span>
-                                <span>Form 4 Physics</span>
-                            </div>
-                            <div class="timetable-item">
-                                <span>10:00 AM - 11:00 AM</span>
-                                <span>Form 2 Science Lab</span>
-                            </div>
-                            <div class="timetable-item">
-                                <span>2:00 PM - 3:00 PM</span>
-                                <span>Form 1 Science</span>
-                            </div>
-                        </div>
-                        
-                        <div class="timetable-card">
-                            <div class="timetable-day">Thursday</div>
-                            <div class="timetable-item">
-                                <span>8:00 AM - 10:00 AM</span>
-                                <span>Form 3 Physics Lab</span>
-                            </div>
-                            <div class="timetable-item">
-                                <span>1:00 PM - 2:00 PM</span>
-                                <span>Form 4 Physics</span>
-                            </div>
-                        </div>
-                        
-                        <div class="timetable-card">
-                            <div class="timetable-day">Friday</div>
-                            <div class="timetable-item">
-                                <span>9:00 AM - 10:00 AM</span>
-                                <span>Form 2 Science</span>
-                            </div>
-                            <div class="timetable-item">
-                                <span>11:00 AM - 12:00 PM</span>
-                                <span>Form 1 Science Lab</span>
-                            </div>
-                            <div class="timetable-item">
-                                <span>2:00 PM - 3:00 PM</span>
-                                <span>Department Meeting</span>
-                            </div>
-                        </div>
+                        <?php 
+                            endif;
+                        endforeach; 
+                        ?>
                     </div>
                 </div>
                 
@@ -1419,7 +1766,7 @@ if (isset($_POST['mark_attendance'])) {
                                     <div class="list-group">
                                         <a href="#" class="list-group-item list-group-item-action active">
                                             <div class="d-flex align-items-center">
-                                                <img src="<?= $_SESSION['faculty_photo'] ?>" class="rounded-circle me-3" width="40" height="40">
+                                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" class="rounded-circle me-3" width="40" height="40">
                                                 <div>
                                                     <h6 class="mb-0">Principal's Office</h6>
                                                     <small>Last message: 2 hours ago</small>
@@ -1428,7 +1775,7 @@ if (isset($_POST['mark_attendance'])) {
                                         </a>
                                         <a href="#" class="list-group-item list-group-item-action">
                                             <div class="d-flex align-items-center">
-                                                <img src="<?= $_SESSION['faculty_photo'] ?>" class="rounded-circle me-3" width="40" height="40">
+                                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" class="rounded-circle me-3" width="40" height="40">
                                                 <div>
                                                     <h6 class="mb-0">Science Department</h6>
                                                     <small>Last message: Yesterday</small>
@@ -1437,7 +1784,7 @@ if (isset($_POST['mark_attendance'])) {
                                         </a>
                                         <a href="#" class="list-group-item list-group-item-action">
                                             <div class="d-flex align-items-center">
-                                                <img src="<?= $_SESSION['faculty_photo'] ?>" class="rounded-circle me-3" width="40" height="40">
+                                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" class="rounded-circle me-3" width="40" height="40">
                                                 <div>
                                                     <h6 class="mb-0">John Kamau (Parent)</h6>
                                                     <small>Last message: Sep 12</small>
@@ -1459,7 +1806,7 @@ if (isset($_POST['mark_attendance'])) {
                                     <div class="d-flex flex-column" style="max-height: 400px; overflow-y: auto;">
                                         <div class="message-item">
                                             <div class="d-flex">
-                                                <img src="<?= $_SESSION['faculty_photo'] ?>" class="rounded-circle me-3" width="40" height="40">
+                                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" class="rounded-circle me-3" width="40" height="40">
                                                 <div>
                                                     <h6 class="mb-0">Principal's Office</h6>
                                                     <small class="text-muted">Today, 10:30 AM</small>
@@ -1470,7 +1817,7 @@ if (isset($_POST['mark_attendance'])) {
                                         
                                         <div class="message-item bg-light">
                                             <div class="d-flex">
-                                                <img src="<?= $_SESSION['faculty_photo'] ?>" class="rounded-circle me-3" width="40" height="40">
+                                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" class="rounded-circle me-3" width="40" height="40">
                                                 <div>
                                                     <h6 class="mb-0">You</h6>
                                                     <small class="text-muted">Today, 10:45 AM</small>
@@ -1481,7 +1828,7 @@ if (isset($_POST['mark_attendance'])) {
                                         
                                         <div class="message-item">
                                             <div class="d-flex">
-                                                <img src="<?= $_SESSION['faculty_photo'] ?>" class="rounded-circle me-3" width="40" height="40">
+                                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41yAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" class="rounded-circle me-3" width="40" height="40">
                                                 <div>
                                                     <h6 class="mb-0">Principal's Office</h6>
                                                     <small class="text-muted">Today, 11:15 AM</small>
@@ -1513,18 +1860,18 @@ if (isset($_POST['mark_attendance'])) {
                             <span>Upload New Resource</span>
                         </div>
                         <div class="card-body">
-                            <form>
+                            <form method="POST">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="resource_title" class="form-label">Title</label>
-                                        <input type="text" class="form-control" id="resource_title" required>
+                                        <input type="text" class="form-control" id="resource_title" name="resource_title" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="resource_class" class="form-label">Class</label>
-                                        <select class="form-select" id="resource_class" required>
+                                        <select class="form-select" id="resource_class" name="resource_class" required>
                                             <option value="">Select Class</option>
                                             <?php foreach ($classes as $class): ?>
-                                                <option value="<?= $class['id'] ?>"><?= $class['name'] ?></option>
+                                                <option value="<?= $class['id'] ?>"><?= htmlspecialchars($class['name']) ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -1532,15 +1879,15 @@ if (isset($_POST['mark_attendance'])) {
                                 
                                 <div class="mb-3">
                                     <label for="resource_desc" class="form-label">Description</label>
-                                    <textarea class="form-control" id="resource_desc" rows="3"></textarea>
+                                    <textarea class="form-control" id="resource_desc" name="resource_desc" rows="3"></textarea>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label for="resource_file" class="form-label">Upload File</label>
-                                    <input type="file" class="form-control" id="resource_file" required>
+                                    <input type="file" class="form-control" id="resource_file" name="resource_file" required>
                                 </div>
                                 
-                                <button type="submit" class="btn-mumbe">
+                                <button type="submit" name="upload_resource" class="btn-mumbe">
                                     <i class="fas fa-upload me-2"></i> Upload Resource
                                 </button>
                             </form>
@@ -1613,16 +1960,15 @@ if (isset($_POST['mark_attendance'])) {
                                     <span>Profile Information</span>
                                 </div>
                                 <div class="card-body text-center">
-                                    <img src="<?= $_SESSION['faculty_photo'] ?>" alt="User Photo" class="mb-3" width="120" height="120" style="border-radius: 50%; border: 3px solid var(--secondary-yellow);">
-                                    <h4><?= $_SESSION['faculty_name'] ?></h4>
-                                    <p class="text-muted"><?= $_SESSION['faculty_department'] ?></p>
-                                    <p class="text-muted"><?= $_SESSION['faculty_school'] ?></p>
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNDQ4MCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yeiIvPjwvc3ZnPg==" alt="User Photo" class="mb-3" width="120" height="120" style="border-radius: 50%; border: 3px solid var(--secondary-yellow);">
+                                    <h4><?= htmlspecialchars($faculty['name']) ?></h4>
+                                    <p class="text-muted"><?= htmlspecialchars($faculty['department'] ?? 'Department') ?></p>
+                                    <p class="text-muted">Mumbe Group of Schools</p>
                                     
                                     <div class="mt-4">
                                         <h5>Contact Information</h5>
-                                        <p class="mb-1"><i class="fas fa-envelope me-2"></i> sarah.johnson@mumbeschool.ac.ke</p>
-                                        <p class="mb-1"><i class="fas fa-phone me-2"></i> +254 712 345 678</p>
-                                        <p><i class="fas fa-map-marker-alt me-2"></i> Nairobi, Kenya</p>
+                                        <p class="mb-1"><i class="fas fa-envelope me-2"></i> <?= htmlspecialchars($faculty['email']) ?></p>
+                                        <p class="mb-1"><i class="fas fa-phone me-2"></i> <?= htmlspecialchars($faculty['phone']) ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -1635,47 +1981,42 @@ if (isset($_POST['mark_attendance'])) {
                                     <span>Edit Profile</span>
                                 </div>
                                 <div class="card-body">
-                                    <form class="profile-form">
+                                    <form class="profile-form" method="POST">
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <label for="full_name" class="form-label">Full Name</label>
-                                                <input type="text" class="form-control" id="full_name" value="<?= $_SESSION['faculty_name'] ?>">
+                                                <label for="name" class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($faculty['name']) ?>">
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="email" class="form-label">Email Address</label>
-                                                <input type="email" class="form-control" id="email" value="sarah.johnson@mumbeschool.ac.ke">
+                                                <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($faculty['email']) ?>">
                                             </div>
                                         </div>
                                         
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="phone" class="form-label">Phone Number</label>
-                                                <input type="text" class="form-control" id="phone" value="+254 712 345 678">
+                                                <input type="text" class="form-control" id="phone" name="phone" value="<?= htmlspecialchars($faculty['phone']) ?>">
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="department" class="form-label">Department</label>
-                                                <input type="text" class="form-control" id="department" value="<?= $_SESSION['faculty_department'] ?>">
+                                                <input type="text" class="form-control" id="department" name="department" value="<?= htmlspecialchars($faculty['department'] ?? '') ?>">
                                             </div>
                                         </div>
                                         
                                         <div class="mb-3">
-                                            <label for="school" class="form-label">School</label>
-                                            <input type="text" class="form-control" id="school" value="<?= $_SESSION['faculty_school'] ?>">
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="bio" class="form-label">Bio</label>
-                                            <textarea class="form-control" id="bio" rows="3">Experienced Physics teacher with 10+ years of teaching. Specialized in making complex concepts accessible to students.</textarea>
+                                            <label for="qualifications" class="form-label">Qualifications</label>
+                                            <textarea class="form-control" id="qualifications" name="qualifications" rows="3"><?= htmlspecialchars($faculty['qualifications'] ?? '') ?></textarea>
                                         </div>
                                         
                                         <div class="mb-4">
                                             <label for="profile_photo" class="form-label">Profile Photo</label>
-                                            <input type="file" class="form-control" id="profile_photo">
+                                            <input type="file" class="form-control" id="profile_photo" name="profile_photo">
                                         </div>
                                         
                                         <div class="d-flex justify-content-end gap-2">
                                             <button type="reset" class="btn btn-outline-secondary">Cancel</button>
-                                            <button type="submit" class="btn-mumbe">Save Changes</button>
+                                            <button type="submit" name="update_profile" class="btn-mumbe">Save Changes</button>
                                         </div>
                                     </form>
                                 </div>
@@ -1732,8 +2073,30 @@ if (isset($_POST['mark_attendance'])) {
             <?php endif; ?>
             
             // Set current date for attendance
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('attendance_date').value = today;
+            document.getElementById('attendance_date').value = '<?= $today ?>';
+            
+            // Form validation
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    let valid = true;
+                    const requiredFields = form.querySelectorAll('[required]');
+                    
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            valid = false;
+                            field.classList.add('is-invalid');
+                        } else {
+                            field.classList.remove('is-invalid');
+                        }
+                    });
+                    
+                    if (!valid) {
+                        e.preventDefault();
+                        alert('Please fill in all required fields');
+                    }
+                });
+            });
         });
     </script>
 </body>
